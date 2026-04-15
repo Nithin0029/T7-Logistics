@@ -19,7 +19,18 @@ You MUST respond in this exact JSON format:
   "reasoning": string (3-4 sentences explaining why this store was selected over others)
 }
 
-Score each factor 0-100. Weight inventory 40%, proximity 35%, load 25%. Calculate total as weighted average.`;
+Rules you must follow:
+1. Use only the store data provided below.
+2. Do not claim an item is available at a store if its inventory count is 0.
+3. Inventory score must heavily penalize stores missing any required item.
+4. Prefer stores that can fulfill more of the order over stores that are only closer.
+5. Load score must come from currentLoad / maxCapacity, and lower utilization should score higher.
+6. Proximity score must be based only on the provided coordinates and should reward nearer stores.
+7. "selectedStoreId" must match the store with the strongest overall tradeoff after applying the weights.
+8. "backupStoreId" should be the next-best valid alternative.
+9. Keep reasoning consistent with the actual inventory counts, load, and relative distance.
+
+Score each factor 0-100. Weight inventory 40%, proximity 35%, load 25%. Calculate total as a weighted average.`;
 
 export async function runStoreAgent(order, stores, customerLat, customerLng) {
     const userMessage = `
