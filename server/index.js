@@ -1,8 +1,14 @@
 import express from "express";
 import cors from "cors";
+import path from "path";
+import { fileURLToPath } from "url";
 
 import { orchestrate } from "../src/agents/orchestrator.js";
 import { stores, riders, sampleOrders, demandHistory } from "../data/mockData.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const staticPath = path.join(__dirname, "../dist");
 
 const app = express();
 const port = Number(process.env.PORT || 3001);
@@ -69,6 +75,13 @@ app.post("/api/simulate", async (req, res) => {
     });
   }
 });
+
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(staticPath));
+  app.get("*", (_req, res) => {
+    res.sendFile(path.join(staticPath, "index.html"));
+  });
+}
 
 app.listen(port, () => {
   console.log(`T7 Logistics API running on http://localhost:${port}`);

@@ -734,6 +734,8 @@ function buildAdminAlerts(simulation) {
   return alerts;
 }
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
+
 export default function App() {
   const [bootstrap, setBootstrap] = useState(null);
   const [selectedOrderId, setSelectedOrderId] = useState("");
@@ -755,7 +757,7 @@ export default function App() {
 
     try {
       const orderIdToUse = overrideOrderId || selectedOrderId;
-      const response = await fetch("/api/simulate", {
+      const response = await fetch(`${API_BASE_URL}/api/simulate`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -799,13 +801,13 @@ export default function App() {
   useEffect(() => {
     const loadBootstrap = async () => {
       try {
-        const healthResponse = await fetch("/api/health");
+        const healthResponse = await fetch(`${API_BASE_URL}/api/health`);
         if (!healthResponse.ok) {
           throw new Error("Backend health check failed.");
         }
 
         setSystemHealth("ready");
-        const response = await fetch("/api/bootstrap");
+        const response = await fetch(`${API_BASE_URL}/api/bootstrap`);
         const data = await response.json();
         setBootstrap(data);
         const defaultOrderId = data.orders?.[0]?.id || "";
